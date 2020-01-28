@@ -1,0 +1,35 @@
+{
+  "name": "bootcamp-gostack-10-gobarber",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js",
+    "dev:debug": "nodemon --inspect src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrsants/bootcamp-gostack-10-gobarber.git"
+  },
+  "keywords": [
+    "nodejs",
+    "gobarber",
+    "bootcamp",
+    "express",
+    "es+"
+  ],
+  "author": "Marcelo Batista dos Santos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrsants/bootcamp-gostack-10-gobarber/issues"
+  },
+  "homepage": "https://github.com/mrsants/bootcamp-gostack-10-gobarber#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2",
+    "sucrase": "^3.12.1"
+  }
+}
