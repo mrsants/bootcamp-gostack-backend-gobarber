@@ -31,7 +31,9 @@ yarn add sucrase nodemon -D
 yarn sucrase-node src/server.js
 
 ```
-## Eslint + p`rettier
+
+## Eslint + prettier
+
 ```
  yarn add eslint -D
 
