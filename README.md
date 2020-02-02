@@ -2,6 +2,17 @@
 
 ### bootcamp da Rocketseat
 
+<p align="center">
+  <img alt="" src="https://img.shields.io/github/issues/mrsants/bootcamp-gostack-10-gobarber">
+
+  <img alt="" src="https://img.shields.io/github/forks/mrsants/bootcamp-gostack-10-gobarber">
+
+  <img alt="" src="https://img.shields.io/github/stars/mrsants/bootcamp-gostack-10-gobarber">
+
+  <img alt="" src="https://img.shields.io/github/license/mrsants/bootcamp-gostack-10-gobarber">
+</p>
+
+
 ## Contéudo
 
 - Configurando o Projeto
@@ -23,6 +34,7 @@
 - Validando dados de entrada
 
 ## Configurações
+
 ```
 yarn init -y
 
@@ -96,7 +108,7 @@ yarn sucrase-node src/server.js
    docker logs postgres
 ```
 
-##  Sequelize
+## Sequelize
 
 ```
   const { resolve } = require('path');
@@ -116,6 +128,7 @@ User.create({ name: 'teste' , email: 'teste@teste.com.br' , })
 User.findOne({ where: { email: 'teste@teste.com.br' } })
 
 ```
+
 ## Migrations
 
 ```
@@ -205,3 +218,7 @@ class UserController {
 
     Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNTY4NDA1MDAyLCJleHAiOjE1NjkwMDk4MDJ9.NPwa4vr80wAeEJvX9XWNMQAsUWXaDoSUwuw1KAR4wVw
 ```
+
+## Licença
+
+Esse projeto é licenciado pela MIT License. Veja a página da [licença](https://opensource.org/licenses/MIT) para detalhes.
