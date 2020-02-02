@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/mrsants/bootcamp-gostack-10-gobarber#readme",
   "dependencies": {
+    "bcrypt": "^3.0.7",
     "express": "^4.17.1",
     "pg": "^7.18.1",
     "pg-hstore": "^2.3.3",
