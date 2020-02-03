@@ -1,79 +1,76 @@
-import User from "../models/User";
-
-// import * as Yup from 'yup';
-
+import User from '../models/User';
+import * as Yup from 'yup';
 
 class UserController {
   async store(req, res) {
-    const reqUser = { where: { email: req.body.email } };
-    // const schema = Yup.object().shape({
-    //   name: Yup.string().required(),
-    //   email: Yup.string()
-    //     .email()
-    //     .required(),
-    //   password: Yup.string()
-    //     .min(6)
-    //     .required(),
-    // });
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string()
+        .email()
+        .required(),
+      password: Yup.string()
+        .min(6)
+        .required(),
+    });
 
-    // if (!(await schema.isValid(req.body))) {
-    //   return res
-    //     .status(401)
-    //     .json({ error: 'Falha na validação dos dados fornecidos!' });
-    // }
+    if (!(await schema.isValid(req.body))) {
+      return res.status(401).json({ error: 'Validation fails' });
+    }
 
-    const userExists = await User.findOne(reqUser);
+    const userExists = await User.findOne({ where: { email: req.body.email } });
 
     if (userExists) {
-      return res.status(400).json({ error: 'Usuário já existe!' });
+      return res.status(400).json({ error: 'User already exists' });
     }
+
     const { id, name, email, provider } = await User.create(req.body);
     return res.json({ id, name, email, provider });
   }
 
-  // async update(req, res) {
-  //   const schema = Yup.object().shape({
-  //     name: Yup.string(),
-  //     email: Yup.string().email(),
-  //     avatar_id: Yup.number(),
-  //     oldPassword: Yup.string().min(6),
-  //     password: Yup.string().when('oldPassword', (oldPassword, field) =>
-  //       oldPassword ? field.required() : field
-  //     ),
-  //     confirmPassword: Yup.string().when('password', (password, field) =>
-  //       password ? field.required().oneOf([Yup.ref('password')]) : field
-  //     ),
-  //   });
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string(),
+      email: Yup.string().email(),
+      oldPassword: Yup.string().min(6),
+      password: Yup.string()
+        .min(6)
+        .when('oldPassword', (oldPassword, field) =>
+          oldPassword ? field.required() : field
+        ),
+      confirmPassword: Yup.string().when('password', (password, filed) =>
+        password ? filed.required().oneOf([Yup.ref('password')]) : field
+      ),
+    });
 
-  //   if (!(await schema.isValid(req.body))) {
-  //     return res
-  //       .status(400)
-  //       .json({ error: 'Falha na validação dos dados fornecidos!' });
-  //   }
-  //   const { email, oldPassword } = req.body;
+    if (!(await schema.isValid(req.body))) {
+      return res.status(401).json({ error: 'Validation fails' });
+    }
 
-  //   const userOnDb = await User.findByPk(req.userID);
+    const { email, oldPassword } = req.body;
+    console.log(email);
+    const userOnDb = await User.findByPk(req.userId);
+    console.log(userOnDb);
+    if (email && email !== userOnDb.email) {
+      const userExists = await User.findOne({ where: { email } });
 
-  //   if (email && email !== userOnDb.email) {
-  //     const userExists = await User.findOne({ where: { email } });
+      if (userExists) {
+        return res.status(400).json({ error: 'User already exists' });
+      }
+    }
 
-  //     if (userExists) {
-  //       return res.status(400).json({ error: 'Usuário já existe.' });
-  //     }
-  //   }
+    if (oldPassword && !(await userOnDb.checkPassword(oldPassword))) {
+      return res.status(400).json({ error: 'Password does not match' });
+    }
 
-  //   if (oldPassword && !(await userOnDb.checkPassword(oldPassword))) {
-  //     return res.status(400).json({ error: 'As senhas não conferem.' });
-  //   }
+    const { id, name, provider } = await userOnDb.update(req.body);
 
-  //   const { id, name, provider } = await userOnDb.update(req.body);
-  //   return res.json({
-  //     id,
-  //     name,
-  //     email,
-  //     provider,
-  //   });
-  // }
+    return res.json({
+      id,
+      name,
+      email,
+      provider,
+    });
+  }
 }
 
 export default new UserController();

@@ -23,6 +23,14 @@ class User extends Model {
     });
     return this;
   }
+
+  checkPassword(password) {
+    return bcrypt.compare(password, this.password_hash);
+  }
+
+  static associate(models) {
+    this.belongsTo(models.File, { foreignKey: 'avatar_id' });
+  }
 }
 
 export default User;
