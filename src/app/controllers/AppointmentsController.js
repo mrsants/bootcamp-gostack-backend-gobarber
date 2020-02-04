@@ -3,6 +3,7 @@ import * as Yup from 'yup';
 import Appointments from '../models/Appointments';
 import File from '../models/File';
 import User from '../models/User';
+import Notification from '../../schemas/Notification';
 
 class AppointmentsController {
   async index(req, res) {
@@ -13,7 +14,7 @@ class AppointmentsController {
       order: ['date'],
       attributes: ['id', 'date'],
       limit: 20,
-      offset: (page -1 ) * 20,
+      offset: (page - 1) * 20,
       include: [
         {
           model: User,
@@ -106,6 +107,13 @@ class AppointmentsController {
       user_id: req.userId,
       provider_id,
       date: hourStart,
+    });
+
+    /**
+     * Notify appointment provider
+     */
+    await Notification.create({
+      content: 'Novo agendamento de Marcelo para dia 22 de Junho as 8:40h',
     });
 
     return res.status(200).json(appointments);
