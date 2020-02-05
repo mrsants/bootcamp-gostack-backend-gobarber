@@ -1,4 +1,4 @@
-import { isBefore, parseISO, startOfHour, format } from 'date-fns';
+import { isBefore, parseISO, startOfHour, format, subHours } from 'date-fns';
 import { pt } from 'date-fns/locale/pt';
 import * as Yup from 'yup';
 import Appointments from '../models/Appointments';
@@ -68,7 +68,7 @@ class AppointmentsController {
       });
     }
 
-    if(provider_id === req.userId){
+    if (provider_id === req.userId) {
       return res.status(401).json({
         error: 'Not permitted!',
       });
@@ -130,6 +130,49 @@ class AppointmentsController {
     });
 
     return res.status(200).json(appointments);
+  }
+
+  async delete(req, res) {
+    const appointment = await Appointment.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: 'provider',
+          attributes: ['name', 'email'],
+        },
+        { model: User, as: 'user', attributes: ['name'] },
+      ],
+    });
+
+    if (!appointment) {
+      return res.status(401).json({
+        error: 'Não há agendamento para ser deletado!',
+      });
+    }
+
+    if (appointment.user_id !== req.userID) {
+      return res.status(401).json({
+        error: 'Você não tem permissão para cancelar este agendamento',
+      });
+    }
+
+    const dateWithSub = subHours(appointment.date, 2);
+
+    if (isBefore(dateWithSub, new Date())) {
+      return res.status(401).json({
+        error: 'Só pode cancelar agendamento com 2 horas no mínimo!',
+      });
+    }
+
+    appointment.canceled_at = new Date();
+
+    await appointment.save();
+
+    // await Queue.add(CancellationMail.key, {
+    //   appointment,
+    // });
+
+    return res.json(appointment);
   }
 }
 
