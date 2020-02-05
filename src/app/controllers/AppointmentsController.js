@@ -62,14 +62,17 @@ class AppointmentsController {
       },
     });
 
-    console.log(checkisProvider);
-
     if (!checkisProvider) {
       return res.status(401).json({
         error: 'You can only create appointments with providers',
       });
     }
 
+    if(provider_id === req.userId){
+      return res.status(401).json({
+        error: 'Not permitted!',
+      });
+    }
     /**
      * Check for past dates
      */
@@ -122,7 +125,7 @@ class AppointmentsController {
      * Notify appointment provider
      */
     await Notification.create({
-      content: `Novo agendamento de ${user.name} para dia ${formattedDate}`,
+      content: `Novo agendamento de ${user.name} para ${formattedDate}`,
       user: provider_id,
     });
 
