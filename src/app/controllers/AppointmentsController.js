@@ -5,6 +5,7 @@ import Appointments from '../models/Appointments';
 import File from '../models/File';
 import User from '../models/User';
 import Notification from '../../schemas/Notification';
+import Mail from '../../lib/Mail';
 
 class AppointmentsController {
   async index(req, res) {
@@ -114,6 +115,7 @@ class AppointmentsController {
     });
 
     const user = await User.findByPk(req.userId);
+
     const formattedDate = format(
       hourStart,
       "'dia' dd 'de' MMMM', às' H:mm'h'",
@@ -125,7 +127,7 @@ class AppointmentsController {
      * Notify appointment provider
      */
     await Notification.create({
-      content: `Novo agendamento de ${user.name} para ${formattedDate}`,
+      content: `New schedule of ${user} for ${formattedDate}`,
       user: provider_id,
     });
 
@@ -133,7 +135,7 @@ class AppointmentsController {
   }
 
   async delete(req, res) {
-    const appointment = await Appointment.findByPk(req.params.id, {
+    const appointment = await Appointments.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -146,13 +148,13 @@ class AppointmentsController {
 
     if (!appointment) {
       return res.status(401).json({
-        error: 'Não há agendamento para ser deletado!',
+        error: 'There is no schedule to be deleted!',
       });
     }
 
-    if (appointment.user_id !== req.userID) {
+    if (appointment.user_id !== req.userId) {
       return res.status(401).json({
-        error: 'Você não tem permissão para cancelar este agendamento',
+        error: 'You are not allowed to cancel this appointment',
       });
     }
 
@@ -160,7 +162,7 @@ class AppointmentsController {
 
     if (isBefore(dateWithSub, new Date())) {
       return res.status(401).json({
-        error: 'Só pode cancelar agendamento com 2 horas no mínimo!',
+        error: 'You can only cancel an appointment with a minimum of 2 hours!',
       });
     }
 
@@ -168,9 +170,18 @@ class AppointmentsController {
 
     await appointment.save();
 
-    // await Queue.add(CancellationMail.key, {
-    //   appointment,
-    // });
+    Mail.sendMail({
+      to: `${appointment.provider.name} <${appointment.provider.email}>`,
+      subject: 'Schedule canceled',
+      template: 'cancellation',
+      context: {
+        provider: appointment.provider.name,
+        user: appointment.user.name,
+        date: format(appointment.date, "'dia' dd 'de' MMMM', às' H:mm'h'", {
+          locale: pt,
+        }),
+      },
+    });
 
     return res.json(appointment);
   }
