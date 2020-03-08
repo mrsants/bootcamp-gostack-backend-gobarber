@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+import 'dotenv/config';
 import app from './app';
 
-app.listen(3333, console.log('server running'));
+app.listen(process.env.APP_PORT, () => {
+  console.log(`servet running ${process.env.APP_PORT}`);
+});

@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User';
-import authConfig from '../../config/authConfig';
 import * as Yup from 'yup';
+import authConfig from '../../config/authConfig';
+import File from '../models/File';
+import User from '../models/User';
 
 class SessionController {
   async store(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
       email: Yup.string()
         .email()
         .required(),
@@ -21,6 +21,13 @@ class SessionController {
 
     const user = await User.findOne({
       where: { email },
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'url', 'path'],
+        },
+      ],
     });
 
     if (!user) {
@@ -35,13 +42,15 @@ class SessionController {
       });
     }
 
-    const { id, name } = user;
+    const { id, name, avatar, provider } = user;
 
     return res.json({
       user: {
         id,
         name,
         email,
+        avatar,
+        provider,
       },
       token: jwt.sign({ id }, authConfig.authSecret, {
         expiresIn: authConfig.expiresIn,

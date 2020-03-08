@@ -7,6 +7,7 @@ import Youch from 'youch';
 import sentryConfig from './config/sentryConfig';
 import './database';
 import routes from './routes';
+import cors from 'cors';
 
 class App {
   constructor() {
@@ -21,7 +22,7 @@ class App {
 
   middlewares() {
     this.server.use(Sentry.Handlers.requestHandler());
-
+    this.server.use(cors());
     this.server.use(json());
     this.server.use(
       '/files',

@@ -1,14 +1,16 @@
-import Appointments from '../models/Appointments';
-import { Op } from 'sequelize';
+/* eslint-disable no-unused-expressions */
+/* eslint-disable array-callback-return */
 import {
-  startOfDay,
   endOfDay,
-  setSeconds,
-  setMinutes,
-  setHours,
   format,
   isAfter,
+  setHours,
+  setMinutes,
+  setSeconds,
+  startOfDay,
 } from 'date-fns';
+import { Op } from 'sequelize';
+import Appointments from '../models/Appointments';
 
 class AvailableController {
   async index(req, res) {
@@ -59,7 +61,7 @@ class AvailableController {
         available:
           isAfter(value, new Date()) &&
           !appointments.find(a => {
-            format(a.date, 'HH:mm') == time;
+            format(a.date, 'HH:mm') === time;
           }),
       };
     });
