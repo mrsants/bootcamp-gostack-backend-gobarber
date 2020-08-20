@@ -27,7 +27,7 @@
   "homepage": "https://github.com/mrsants/bootcamp-gostack-10-gobarber#readme",
   "dependencies": {
     "@sentry/node": "5.12.2",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "bee-queue": "^1.2.3",
     "crypto": "^1.0.1",
     "date-fns": "^2.0.0-beta.5",
